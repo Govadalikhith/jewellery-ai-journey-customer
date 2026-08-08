@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: jewellery-ai-customer-journey-orchestration
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        value: embedded
+      - key: JWT_SECRET
+        value: aurum_jewellery_super_secret_jwt_key_2026_nxtwave
+      - key: AI_CONFIDENCE_THRESHOLD
+        value: "0.75"
+      - key: NODE_ENV
+        value: production

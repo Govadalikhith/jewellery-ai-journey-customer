@@ -4,14 +4,15 @@
   "description": "Enterprise Jewellery AI Customer Journey Orchestrator with PostgreSQL, Gemini AI, and Human-in-the-Loop Governance",
   "private": true,
   "type": "module",
+  "main": "backend/src/server.js",
   "scripts": {
-    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install",
+    "start": "node backend/src/server.js",
+    "dev": "node backend/src/server.js",
     "backend": "cd backend && npm run dev",
     "frontend": "cd frontend && npm run dev",
-    "start": "node --max-old-space-size=384 backend/src/server.js",
     "seed": "node database/db-runner.js --seed",
-    "migrate": "node database/db-runner.js --migrate",
-    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install"
+    "migrate": "node database/db-runner.js --migrate"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.14",
