@@ -15,11 +15,21 @@ let isInitialized = false;
 export async function initDb() {
   if (isInitialized) return;
 
-  const schemaPath = path.join(__dirname, '..', '..', '..', 'database', 'schema.sql');
-  const seedPath = path.join(__dirname, '..', '..', '..', 'database', 'seeds', '001_jewellery_retail_seed.sql');
+  const possibleSchemaPaths = [
+    path.join(__dirname, '..', '..', '..', 'database', 'schema.sql'),
+    path.join(process.cwd(), 'database', 'schema.sql'),
+    path.join(process.cwd(), 'schema.sql')
+  ];
+  const possibleSeedPaths = [
+    path.join(__dirname, '..', '..', '..', 'database', 'seeds', '001_jewellery_retail_seed.sql'),
+    path.join(process.cwd(), 'database', 'seeds', '001_jewellery_retail_seed.sql')
+  ];
 
-  const schemaSql = fs.existsSync(schemaPath) ? fs.readFileSync(schemaPath, 'utf8') : '';
-  const seedSql = fs.existsSync(seedPath) ? fs.readFileSync(seedPath, 'utf8') : '';
+  const schemaPath = possibleSchemaPaths.find(p => fs.existsSync(p));
+  const seedPath = possibleSeedPaths.find(p => fs.existsSync(p));
+
+  const schemaSql = schemaPath ? fs.readFileSync(schemaPath, 'utf8') : '';
+  const seedSql = seedPath ? fs.readFileSync(seedPath, 'utf8') : '';
 
   if (env.DATABASE_URL && env.DATABASE_URL !== 'embedded' && !env.DATABASE_URL.includes('embedded')) {
     try {
@@ -47,12 +57,16 @@ export async function initDb() {
 
   // Use Embedded PostgreSQL (PGlite) with memory-safe initialization
   console.log('📦 Initializing Embedded PostgreSQL (PGlite)...');
-  const dbDir = path.join(__dirname, '..', '..', '..', '.pgdata');
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
+  try {
+    const dbDir = path.join(process.cwd(), '.pgdata');
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+    }
+    pgliteInstance = new PGlite(dbDir);
+  } catch (err) {
+    console.log('📦 Cloud runtime detected: Initializing in-memory PGlite instance...');
+    pgliteInstance = new PGlite();
   }
-
-  pgliteInstance = new PGlite(dbDir);
 
   // Check if tables already exist to prevent redundant re-parsing in memory
   try {
