@@ -21,6 +21,10 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   logger.info(`🩺 Health check: http://0.0.0.0:${PORT}/api/health`);
 });
 
+// Configure Render edge proxy timeouts (120s) per official Render guidelines
+server.keepAliveTimeout = 120000;
+server.headersTimeout = 120000;
+
 // 2. Initialize Database asynchronously without blocking server port binding
 initDb()
   .then(() => {
