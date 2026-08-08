@@ -45,7 +45,7 @@ if (finalDistPath) {
 }
 
 // Cloud Health Check
-app.get('/api/health', (req, res) => {
+app.get(['/health', '/api/health'], (req, res) => {
   return sendSuccess(res, {
     status: 'healthy',
     timestamp: new Date().toISOString(),

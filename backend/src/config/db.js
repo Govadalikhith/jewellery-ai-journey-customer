@@ -59,12 +59,15 @@ export async function initDb() {
       try { fs.mkdirSync(dbDir, { recursive: true }); } catch (e) {}
     }
     pgliteInstance = new PGlite(dbDir);
+    if (pgliteInstance.waitReady) await pgliteInstance.waitReady;
   } catch (err) {
-    console.log('📦 Cloud runtime: Initializing in-memory PGlite instance...');
+    console.log('📦 Cloud runtime: Initializing in-memory PGlite instance...', err.message);
     try {
       pgliteInstance = new PGlite();
+      if (pgliteInstance.waitReady) await pgliteInstance.waitReady;
     } catch (e) {
       console.log('📦 Operating in ultra-fast zero-dependency memory mode.');
+      pgliteInstance = null;
     }
   }
 
@@ -85,7 +88,7 @@ export async function initDb() {
       isInitialized = true;
       return;
     } catch (e) {
-      console.warn('PGlite execution fallback:', e.message);
+      console.warn('PGlite execution fallback engaged:', e.message);
     }
   }
 
