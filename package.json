@@ -8,7 +8,7 @@
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "backend": "cd backend && npm run dev",
     "frontend": "cd frontend && npm run dev",
-    "start": "node backend/src/server.js",
+    "start": "node --max-old-space-size=384 backend/src/server.js",
     "seed": "node database/db-runner.js --seed",
     "migrate": "node database/db-runner.js --migrate",
     "build": "cd frontend && npm install && npm run build && cd ../backend && npm install"

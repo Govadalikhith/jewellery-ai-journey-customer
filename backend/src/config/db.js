@@ -45,7 +45,7 @@ export async function initDb() {
     }
   }
 
-  // Use Embedded PostgreSQL (PGlite)
+  // Use Embedded PostgreSQL (PGlite) with memory-safe initialization
   console.log('📦 Initializing Embedded PostgreSQL (PGlite)...');
   const dbDir = path.join(__dirname, '..', '..', '..', '.pgdata');
   if (!fs.existsSync(dbDir)) {
@@ -53,6 +53,19 @@ export async function initDb() {
   }
 
   pgliteInstance = new PGlite(dbDir);
+
+  // Check if tables already exist to prevent redundant re-parsing in memory
+  try {
+    const existing = await pgliteInstance.query(`SELECT 1 FROM users LIMIT 1`);
+    if (existing.rows && existing.rows.length > 0) {
+      console.log('✅ Embedded PostgreSQL engine active and data verified.');
+      isInitialized = true;
+      return;
+    }
+  } catch (e) {
+    // Tables do not exist yet, proceed with schema creation and seed
+  }
+
   if (schemaSql) {
     await pgliteInstance.exec(schemaSql);
   }
@@ -77,9 +90,7 @@ export async function query(text, params = []) {
   });
 
   if (pool) {
-    const start = Date.now();
     const res = await pool.query(text, normalizedParams);
-    const duration = Date.now() - start;
     return res;
   }
 
