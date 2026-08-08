@@ -1,0 +1,32 @@
+{
+  "name": "jewellery-ai-customer-journey-orchestrator",
+  "version": "1.0.0",
+  "description": "Enterprise Jewellery AI Customer Journey Orchestrator with PostgreSQL, Gemini AI, and Human-in-the-Loop Governance",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "start": "node backend/src/server.js",
+    "seed": "node database/db-runner.js --seed",
+    "migrate": "node database/db-runner.js --migrate",
+    "build": "cd frontend && npm run build"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.2.14",
+    "pg": "^8.13.1"
+  },
+  "keywords": [
+    "jewellery",
+    "ai",
+    "customer-journey",
+    "orchestrator",
+    "gemini",
+    "postgresql",
+    "react",
+    "express"
+  ],
+  "author": "Antigravity Senior Engineering Team",
+  "license": "ISC"
+}
