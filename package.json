@@ -6,7 +6,7 @@
   "type": "module",
   "main": "backend/src/server.js",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install",
+    "build": "cd frontend && npm install && npm run build && cd .. && npm install",
     "start": "node backend/src/server.js",
     "dev": "node backend/src/server.js",
     "backend": "cd backend && npm run dev",
@@ -16,7 +16,17 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.14",
-    "pg": "^8.13.1"
+    "@google/generative-ai": "^0.21.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "pg": "^8.13.1",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
   },
   "keywords": [
     "jewellery",
