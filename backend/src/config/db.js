@@ -1,5 +1,4 @@
 import pg from 'pg';
-import { PGlite } from '@electric-sql/pglite';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -54,6 +53,7 @@ export async function initDb() {
 
   // Embedded PostgreSQL (PGlite) with cloud memory-safe fallback
   try {
+    const { PGlite } = await import('@electric-sql/pglite');
     const dbDir = path.join(process.cwd(), '.pgdata');
     if (!fs.existsSync(dbDir)) {
       try { fs.mkdirSync(dbDir, { recursive: true }); } catch (e) {}
@@ -61,8 +61,9 @@ export async function initDb() {
     pgliteInstance = new PGlite(dbDir);
     if (pgliteInstance.waitReady) await pgliteInstance.waitReady;
   } catch (err) {
-    console.log('📦 Cloud runtime: Initializing in-memory PGlite instance...', err.message);
+    console.log('📦 Cloud runtime: Initializing in-memory database engine...', err.message);
     try {
+      const { PGlite } = await import('@electric-sql/pglite');
       pgliteInstance = new PGlite();
       if (pgliteInstance.waitReady) await pgliteInstance.waitReady;
     } catch (e) {
