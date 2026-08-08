@@ -11,7 +11,7 @@
     "start": "node backend/src/server.js",
     "seed": "node database/db-runner.js --seed",
     "migrate": "node database/db-runner.js --migrate",
-    "build": "cd frontend && npm run build"
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.14",

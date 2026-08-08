@@ -37,6 +37,23 @@ app.get('/api/health', (req, res) => {
 // Version 1 Master Routes
 app.use('/api/v1', routes);
 
+// Serve Frontend Static Files in Production (e.g. Render / Cloud)
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = path.join(__dirname, '..', '..', 'frontend', 'dist');
+
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
 // Global Error Handler
 app.use(errorHandler);
 
