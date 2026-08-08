@@ -12,7 +12,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('⚠️ Unhandled Promise Rejection intercepted:', reason);
 });
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : (env.PORT || 5000);
+const PORT = env.PORT || (process.env.PORT ? parseInt(process.env.PORT, 10) : 5000);
 
 // 1. Immediately bind and listen on 0.0.0.0 to satisfy Render cloud port scanner
 const server = app.listen(PORT, '0.0.0.0', () => {

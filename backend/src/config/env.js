@@ -5,12 +5,16 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const systemPort = process.env.PORT;
+
 // Load .env from backend root or parent directory
 dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 dotenv.config({ path: path.join(__dirname, '..', '..', '..', '.env') });
 
+const finalPort = systemPort || process.env.PORT || 5000;
+
 export const env = {
-  PORT: process.env.PORT ? parseInt(process.env.PORT, 10) : 5000,
+  PORT: parseInt(finalPort, 10),
   NODE_ENV: process.env.NODE_ENV || 'development',
   DATABASE_URL: process.env.DATABASE_URL || 'embedded',
   JWT_SECRET: process.env.JWT_SECRET || 'aurum_jewellery_super_secret_jwt_key_2026_nxtwave',
