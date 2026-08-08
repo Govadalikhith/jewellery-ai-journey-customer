@@ -30,7 +30,21 @@ app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health Check for Render / Cloud
+// Determine Frontend Dist Path across environments
+const possibleDistPaths = [
+  path.join(__dirname, '..', '..', 'frontend', 'dist'),
+  path.join(process.cwd(), 'frontend', 'dist'),
+  path.join(process.cwd(), 'dist')
+];
+
+const finalDistPath = possibleDistPaths.find(p => fs.existsSync(p));
+
+if (finalDistPath) {
+  console.log(`🌐 Static assets mounted from: ${finalDistPath}`);
+  app.use(express.static(finalDistPath));
+}
+
+// Cloud Health Check
 app.get('/api/health', (req, res) => {
   return sendSuccess(res, {
     status: 'healthy',
@@ -40,36 +54,19 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Version 1 Master Routes
+// Master REST API v1
 app.use('/api/v1', routes);
 
-// Determine Frontend Dist Path across local and cloud environments
-const possibleDistPaths = [
-  path.join(__dirname, '..', '..', 'frontend', 'dist'),
-  path.join(process.cwd(), 'frontend', 'dist'),
-  path.join(process.cwd(), 'dist')
-];
-
-let finalDistPath = possibleDistPaths.find(p => fs.existsSync(p));
-
-if (finalDistPath) {
-  console.log(`🌐 Serving production frontend bundle from: ${finalDistPath}`);
-  app.use(express.static(finalDistPath));
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(finalDistPath, 'index.html'));
-  });
-} else {
-  // If dist is not yet built, provide a clean JSON status on root
-  app.get('/', (req, res) => {
-    return res.status(200).json({
-      status: 'online',
-      message: 'Jewellery AI Customer Journey Orchestrator API is running.',
-      frontend: 'Frontend bundle building. Refresh shortly.',
-      healthCheck: '/api/health'
-    });
-  });
-}
+// SPA Single-Page-Application Catch-All for Frontend
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  if (finalDistPath && fs.existsSync(path.join(finalDistPath, 'index.html'))) {
+    return res.sendFile(path.join(finalDistPath, 'index.html'));
+  }
+  return res.status(200).send(`<!DOCTYPE html><html><head><title>Jewellery AI Orchestrator</title></head><body style="font-family:system-ui,-apple-system,sans-serif;padding:3rem;text-align:center;background:#0d1117;color:#f3f4f6;"><h2>✨ Aurum & Co. Jewellery AI Orchestrator</h2><p style="color:#9ca3af;">Cloud Service Status: Healthy | <a style="color:#eab308;" href="/api/health">/api/health</a></p></body></html>`);
+});
 
 // Global Error Handler
 app.use(errorHandler);
