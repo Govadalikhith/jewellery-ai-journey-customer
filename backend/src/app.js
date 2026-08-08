@@ -57,6 +57,14 @@ app.get('/api/health', (req, res) => {
 // Master REST API v1
 app.use('/api/v1', routes);
 
+// Explicit Root Route
+app.get('/', (req, res) => {
+  if (finalDistPath && fs.existsSync(path.join(finalDistPath, 'index.html'))) {
+    return res.sendFile(path.join(finalDistPath, 'index.html'));
+  }
+  return res.status(200).send(`<!DOCTYPE html><html><head><title>Jewellery AI Orchestrator</title></head><body style="font-family:system-ui,-apple-system,sans-serif;padding:3rem;text-align:center;background:#0d1117;color:#f3f4f6;"><h2>✨ Aurum & Co. Jewellery AI Orchestrator</h2><p style="color:#9ca3af;">Cloud Service Status: Healthy | <a style="color:#eab308;" href="/api/health">/api/health</a></p></body></html>`);
+});
+
 // SPA Single-Page-Application Catch-All for Frontend
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) {
@@ -65,7 +73,7 @@ app.get('*', (req, res, next) => {
   if (finalDistPath && fs.existsSync(path.join(finalDistPath, 'index.html'))) {
     return res.sendFile(path.join(finalDistPath, 'index.html'));
   }
-  return res.status(200).send(`<!DOCTYPE html><html><head><title>Jewellery AI Orchestrator</title></head><body style="font-family:system-ui,-apple-system,sans-serif;padding:3rem;text-align:center;background:#0d1117;color:#f3f4f6;"><h2>✨ Aurum & Co. Jewellery AI Orchestrator</h2><p style="color:#9ca3af;">Cloud Service Status: Healthy | <a style="color:#eab308;" href="/api/health">/api/health</a></p></body></html>`);
+  return res.redirect('/');
 });
 
 // Global Error Handler
