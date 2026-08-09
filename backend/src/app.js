@@ -33,6 +33,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Determine Frontend Dist Path across environments
 const possibleDistPaths = [
   path.join(__dirname, '..', '..', 'frontend', 'dist'),
+  path.join(__dirname, '..', 'frontend', 'dist'),
+  path.join(__dirname, 'frontend', 'dist'),
   path.join(process.cwd(), 'frontend', 'dist'),
   path.join(process.cwd(), 'dist')
 ];
